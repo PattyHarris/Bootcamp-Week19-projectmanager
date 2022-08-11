@@ -61,3 +61,7 @@ And lastly, refactor 'index.js' to contain minimal content:
         )
         }
 ```
+
+## Create the Home Page
+
+Not much here - simple web page that describe the app showing that subscriptions with a 7-day free trial and then $19.99 a month. The 'pages/index.js' includes a login button, but no real functionality yet.
