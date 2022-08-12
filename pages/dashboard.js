@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
-export default function Home() {
+export default function Dashboard() {
   const router = useRouter();
 
   const { data: session, status } = useSession();
@@ -13,8 +13,8 @@ export default function Home() {
     return null;
   }
 
-  if (session) {
-    router.push("/dashboard");
+  if (!session) {
+    router.push("/");
     return;
   }
 
@@ -29,14 +29,25 @@ export default function Home() {
       <div className="text-center ">
         <h1 className="mt-10 font-extrabold text-2xl">Project Manager</h1>
 
-        <p className="mt-10">The best way to manage your projects!</p>
+        <div className="grid sm:grid-cols-2">
+          <div>
+            <h2 className="mt-10 font-bold">Project #1</h2>
 
-        <p className="mt-10">Free 7 days trial then just $19.99/m</p>
+            <ol className="mt-4 list-inside list-decimal">
+              <li>TODO 1</li>
+              <li>TODO 2</li>
+              <li>TODO 3</li>
+            </ol>
+          </div>
+          <div>
+            <h2 className="mt-10 font-bold">Project #2</h2>
 
-        <div className="mt-10">
-          <a className="bg-black text-white px-5 py-2" href="/api/auth/signin">
-            Log in
-          </a>
+            <ol className="mt-4 list-inside list-decimal">
+              <li>TODO 1</li>
+              <li>TODO 2</li>
+              <li>TODO 3</li>
+            </ol>
+          </div>
         </div>
       </div>
     </div>

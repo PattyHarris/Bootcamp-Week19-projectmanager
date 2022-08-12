@@ -65,3 +65,25 @@ And lastly, refactor 'index.js' to contain minimal content:
 ## Create the Home Page
 
 Not much here - simple web page that describe the app showing that subscriptions with a 7-day free trial and then $19.99 a month. The 'pages/index.js' includes a login button, but no real functionality yet.
+
+## Login and Check the Subscription State
+
+1. In this section, refactor the 'pages/index.js' to redirect the user to the dashboard if they are logged in.
+2. The dashboard currently has hardcoded data showing 2 lists, each with some tasks.
+3. From 'pages/dashboard.js', if the user isn't subscribed, the user is redirected to the the subscription page (next lesson).
+4. At this point, I ran in the following error:
+
+```
+next-dev.js?3515:20 Error: Abort fetching component for route: "/dashboard"
+    at handleCancelled (router.js?8684:346:27)
+    at _callee$ (router.js?8684:1249:17)
+    at tryCatch (runtime.js?ecd4:45:16)
+    at Generator.invoke [as _invoke] (runtime.js?ecd4:274:1)
+    at prototype.<computed> [as next] (runtime.js?ecd4:97:1)
+    at asyncGeneratorStep (_async_to_generator.js?0e30:23:1)
+    at _next (_async_to_generator.js?0e30:12:1)
+window.console.error @ next-dev.js?3515:20
+
+```
+
+It runs out that the latest version of Prisma seems to be the culprit. I tested by downgrading to version 4.1.1 - error goes away.
