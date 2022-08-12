@@ -87,3 +87,18 @@ window.console.error @ next-dev.js?3515:20
 ```
 
 It runs out that the latest version of Prisma seems to be the culprit. I tested by downgrading to version 4.1.1 - error goes away.
+
+The following seems to fix the problem:
+
+```
+  useEffect(() => {
+    if (!(session || loading)) {
+      return;
+    }
+
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session, loading, router]);
+
+```

@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
@@ -9,14 +10,27 @@ export default function Home() {
 
   const loading = status === "loading";
 
-  if (loading) {
-    return null;
-  }
+  // Using the latest Prisma, this generates an error.
+  // Leaving this code in place for now....
+  // if (loading) {
+  //   return null;
+  // }
 
-  if (session) {
-    router.push("/dashboard");
-    return;
-  }
+  // if (session) {
+  //   router.push("/dashboard");
+  //   return;
+  // }
+
+  // This seems to fix the problem.  See README.md.
+  useEffect(() => {
+    if (!(session || loading)) {
+      return;
+    }
+
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session, loading, router]);
 
   return (
     <div>
