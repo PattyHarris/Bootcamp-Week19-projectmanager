@@ -88,7 +88,7 @@ window.console.error @ next-dev.js?3515:20
 
 It runs out that the latest version of Prisma seems to be the culprit. I tested by downgrading to version 4.1.1 - error goes away.
 
-The following seems to fix the problem:
+The following seems to fix the problem - EDIT: Nope, if you close the tab and then relaunch the app (and there is a session ID), you get the same error....
 
 ```
   useEffect(() => {
@@ -100,5 +100,32 @@ The following seems to fix the problem:
       router.push("/dashboard");
     }
   }, [session, loading, router]);
+
+```
+
+So the real issue here is that the 'push' is called multiple times.  Why we didn't see this error before is a mystery.  Using this SO article: 
+https://stackoverflow.com/questions/73343986/next-js-abort-fetching-component-for-route-login
+
+The above explains it better - but basically, we need to prevent the push from happening multiple times.  And since the useEffect has multiple dependencies, it's tricky.  So, the addition of 'useState' - the article doesn't do this correctly, but the following seems to work:
+```
+  const [redirected, setRedirected] = useState(false);
+
+  // This seems to fix the problem.  See README.md.
+  useEffect(() => {
+    const loading = status === "loading";
+    if (!(session || loading)) {
+      return;
+    }
+
+    if (session) {
+
+      if (redirected) {
+        return;
+      }
+
+      setRedirected(true);
+      router.push("/dashboard");
+    }
+  }, [session, status, router, redirected]);
 
 ```
