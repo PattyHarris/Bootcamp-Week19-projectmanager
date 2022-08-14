@@ -206,3 +206,13 @@ Summary:
 2. Use Stripe session ID to send the user to checkout.
 3. Stripe returns control back to the client using either the 'success' or 'cancel' URL setup in the session data.
 4. In the 'success' page, we make a request to 'api/stripe/success', using the Stripe session ID, to pull out the client ID we passed in step 1 above (by calling stripe.checkout.sessions.retrieve) so we can set the user as 'subscribed'.
+
+## Add Projects and Display from the Database
+
+1. Currently the projects and tasks are hardcoded.
+2. Add 'Project' and 'Todo' models to the database.
+3. Flavio has a note about deletions: deleting a project will delete all the todo's. Deleting a user deletes all projects. Both of the above models contain a 'onDelete: Cascade' which is probably what he's referring to.
+4. Along with the above models, we added a relationship between User and a collection of projects.
+5. In 'pages/dashboard.js', we add a form to allow input of project names - the 'onSubmit' sends the POST to 'api/project'.
+6. To display the project (just names at this point), add the file 'lib//data.js' to which we'll add 'getProjects'.
+7. Import the new function 'getProjects' into 'pages/dashboard.js' along with session and prisma - the latter are needed to access the session's user ID (via 'getServerSideProps').
