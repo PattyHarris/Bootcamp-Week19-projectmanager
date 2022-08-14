@@ -5,6 +5,8 @@ import { useState } from "react";
 import { getProjects } from "lib/data.js";
 import { getSession } from "next-auth/react";
 import prisma from "lib/prisma";
+import Todo from "components/NewTodo";
+import NewTodo from "components/NewTodo";
 
 export default function Dashboard({ projects }) {
   const router = useRouter();
@@ -72,16 +74,18 @@ export default function Dashboard({ projects }) {
             Add
           </button>
         </form>
-
-        <div className="grid sm:grid-cols-2">
-          {projects.map((project) => (
-            <div key={project.id}>
+        
+        <div className="grid sm:grid-cols-2 text-left ml-16">
+          {projects.map((project, project_index) => (
+            <div key={project_index}>
               <h2 className="mt-10 font-bold">{project.name}</h2>
-
-              <ol className="mt-4 list-inside list-decimal">
-                <li>TODO 1</li>
-                <li>TODO 2</li>
-                <li>TODO 3</li>
+              <NewTodo project_id={project.id} />
+              <ol className="mt-4 text-left ">
+                {project.todos.map((todo, todo_index) => (
+                  <li key={todo_index}>
+                    <span>⬜️</span> {todo.name}
+                  </li>
+                ))}
               </ol>
             </div>
           ))}

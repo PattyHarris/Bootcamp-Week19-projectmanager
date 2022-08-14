@@ -216,3 +216,11 @@ Summary:
 5. In 'pages/dashboard.js', we add a form to allow input of project names - the 'onSubmit' sends the POST to 'api/project'.
 6. To display the project (just names at this point), add the file 'lib//data.js' to which we'll add 'getProjects'.
 7. Import the new function 'getProjects' into 'pages/dashboard.js' along with session and prisma - the latter are needed to access the session's user ID (via 'getServerSideProps').
+
+## Add Todos
+
+1. Start with the endpoint handler at 'pages/api/todo.js'.
+2. We'll use a component for the todo: 'components/NewTodo.js'. This will allow us to display multiple instances of the form on the dashboard - each form will have its own state.
+3. Import the component in 'pages/dashboard.js' and add the component JSX inside the project mapping loop.
+4. At this point, the form allows entry of the todo, next we'll display them by getting rid of the hard-coded entries. We need to modify 'getProjects' to include the associated todo's for each project.
+5. Currently each todo has grey box next to it to indicate that it's not done. That will be handled in the next section.
