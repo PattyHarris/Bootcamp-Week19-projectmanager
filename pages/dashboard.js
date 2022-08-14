@@ -18,6 +18,11 @@ export default function Dashboard() {
     return;
   }
 
+  if (!session.user.isSubscriber) {
+    router.push("/subscribe");
+    return;
+  }
+
   return (
     <div>
       <Head>

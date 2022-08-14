@@ -103,10 +103,11 @@ The following seems to fix the problem - EDIT: Nope, if you close the tab and th
 
 ```
 
-So the real issue here is that the 'push' is called multiple times.  Why we didn't see this error before is a mystery.  Using this SO article: 
+So the real issue here is that the 'push' is called multiple times. Why we didn't see this error before is a mystery. Using this SO article:
 https://stackoverflow.com/questions/73343986/next-js-abort-fetching-component-for-route-login
 
-The above explains it better - but basically, we need to prevent the push from happening multiple times.  And since the useEffect has multiple dependencies, it's tricky.  So, the addition of 'useState' - the article doesn't do this correctly, but the following seems to work:
+The above explains it better - but basically, we need to prevent the push from happening multiple times. And since the useEffect has multiple dependencies, it's tricky. So, the addition of 'useState' - the article doesn't do this correctly, but the following seems to work:
+
 ```
   const [redirected, setRedirected] = useState(false);
 
@@ -129,3 +130,79 @@ The above explains it better - but basically, we need to prevent the push from h
   }, [session, status, router, redirected]);
 
 ```
+
+## Add a Stripe Subscription
+
+1. Similar to Week 17, we need to create a 'product' - set the name to 'Project manager subscription'. Set the price to $19.99 and recurring.
+2. Add the product ID to the .env file:
+
+```
+STRIPE_PRICE_ID=price_************YOUR VALUE****
+```
+
+3. Install the Stripe libraries:
+
+```
+npm i @stripe/react-stripe-js @stripe/stripe-js stripe
+```
+
+4. We also need these other keys for the .env file - on the Stripe dashboard click the 'Developers' button to find the public and secret key:
+
+```
+STRIPE_PUBLIC_KEY=pk_test_YOUR_KEY
+STRIPE_SECRET_KEY=sk_test_YOUR_KEY
+BASE_URL=http://localhost:3000
+```
+
+5. Add 'pages/subscribe.js' that provides a button for the user to click to subscribe to our product. When the user clicks the button, we'll send the request to 'pages/api/stripe/session.js'. This endpoint handler sends both a success and 'cancel' URL destination to Stripe as well as a 'client_reference_id' to we know what user is associated with the transaction.
+6. The difference between this week and week 17, that this week we set a free trial adding this option to 'stripe.checkout.sessions.create()':
+
+```
+subscription_data: {
+  trial_period_days: 7
+},
+```
+
+7. Once the transaction is initialized, the Stripe session ID is returned back to the client - the session ID is then used to send the user to payment.
+8. In 'pages/subscribe.js' we need to import the Stripe library (using the 'Script' tag).
+9. In 'pages/subscribe.js', in the button click event handler we use the Stripe frontend library with the Stripe session ID to redirect the user to checkout - here's the complete button handler code - it's the same as Week 17:
+
+```
+        <button
+          className="mt-10 bg-black text-white px-5 py-2"
+          onClick={async () => {
+            const res = await fetch("/api/stripe/session", {
+              method: "POST",
+            });
+
+            const data = await res.json();
+
+            if (data.status === "error") {
+                alert(data.message);
+                return;
+              }
+
+              const sessionId = data.sessionId;
+              const stripePublicKey = data.stripePublicKey;
+
+              const stripe = Stripe(stripePublicKey);
+              stripe.redirectToCheckout({
+                sessionId,
+              });
+            }}
+        >
+          Create a subscription
+        </button>
+
+```
+
+10. At this point, when you're sent to Stripe, you will see a '7 Days Free' message.
+11. Assuming success, setup the 'pages/success.js' - note that we need to use 'getServerSideProps' to retrieve the the router query which holds the Stripe session ID. Using 'getServerSideProps' with no real purpose servers only to make the page server side generated - which then allows access to the router.query.
+12. In 'pages/success.js', we send a request to 'pages/api/stripe/success.js' to obtain the Stripe checkout session information (e.g. the client ID). With that client ID, we can update the database to set the user's 'isSubscriber' flag to true.
+
+Summary:
+
+1. Setup a Stripe session.
+2. Use Stripe session ID to send the user to checkout.
+3. Stripe returns control back to the client using either the 'success' or 'cancel' URL setup in the session data.
+4. In the 'success' page, we make a request to 'api/stripe/success', using the Stripe session ID, to pull out the client ID we passed in step 1 above (by calling stripe.checkout.sessions.retrieve) so we can set the user as 'subscribed'.
