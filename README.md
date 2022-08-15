@@ -231,3 +231,11 @@ Summary:
 2. In the 'pages/dashboard.js', listen for clicks on the 'grey boxes' - here we'll call the endpoint handler at 'api/complete' to set the item as done.
 3. If the todo is done, we'll show a check and change the font of the todo name to include a strike-through font.
 4. Currently you can't uncheck the todo - task for later.
+
+## Delete Projects and Todo's
+
+1. Handle the DELETE request in both 'pages/api/project.js' and 'pages/api/todo.js'. Currently both only accept POST.
+2. We need to use 'deleteMany' instead of 'delete' since the latter requires a primary key, which we don't have. We also need to check for ownership.
+3. For the Todo, we also need to make sure that the project is owned by the current user.
+4. For the user interface changes, we add a trash can next to the project name that will send a DELETE request to the 'pages/api/project.js' endpoint.
+5. Also add the same trash can icon next to the todo item name.

@@ -78,7 +78,28 @@ export default function Dashboard({ projects }) {
         <div className="grid sm:grid-cols-2 text-left ml-16">
           {projects.map((project, project_index) => (
             <div key={project_index}>
-              <h2 className="mt-10 font-bold">{project.name}</h2>
+              <h2 className="mt-10 font-bold">
+                {project.name}
+                <span
+                  className="cursor-pointer"
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    await fetch("/api/project", {
+                      body: JSON.stringify({
+                        id: project.id,
+                      }),
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      method: "DELETE",
+                    });
+
+                    router.reload();
+                  }}
+                >
+                  🗑
+                </span>
+              </h2>
               <NewTodo project_id={project.id} />
               <ol className="mt-4 text-left ">
                 {project.todos.map((todo, todo_index) => (
@@ -103,7 +124,26 @@ export default function Dashboard({ projects }) {
                       {todo.done ? "✅" : "⬜️"}
                     </span>{" "}
                     <span className={`${todo.done ? "line-through" : ""}`}>
-                      {todo.name}
+                      {todo.name}{" "}
+                      <span
+                        className="cursor-pointer"
+                        onClick={async (e) => {
+                          e.preventDefault();
+                          await fetch("/api/todo", {
+                            body: JSON.stringify({
+                              id: todo.id,
+                            }),
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            method: "DELETE",
+                          });
+
+                          router.reload();
+                        }}
+                      >
+                        🗑
+                      </span>
                     </span>
                   </li>
                 ))}
