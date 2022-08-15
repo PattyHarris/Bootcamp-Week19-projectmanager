@@ -239,3 +239,35 @@ Summary:
 3. For the Todo, we also need to make sure that the project is owned by the current user.
 4. For the user interface changes, we add a trash can next to the project name that will send a DELETE request to the 'pages/api/project.js' endpoint.
 5. Also add the same trash can icon next to the todo item name.
+
+## Handle Paid Plan Cancellation
+
+1. The endpoint at 'pages/api/cancel.js' will handle cancelling the subscription:
+   - fetch the Stripe subscription ID
+   - call Stripe to cancel the subscription
+   - delete the user
+2. The user interface is modified to provide a 'cancel subscription' link at the bottom of the dashboard.
+3. The Stripe subscription ID is available from the user object:
+
+```
+user.stripeSubscriptionId
+```
+
+4. To cancel the subscription - in 'pages/api/cancel.js':
+
+```
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+    await stripe.subscriptions.del(user.stripeSubscriptionId)
+```
+
+5. Delete the user and all that user's data (again, in 'pages/api/cancel.js'):
+
+```
+    await prisma.user.delete({
+        where: {
+        id: user.id,
+        },
+    })
+```
+
+To verify, in Stripe, check the "Customers" tab (click on the user to verify that the subscription has been canceled - it does not delete the customer) and in the app, you will be logged out.
