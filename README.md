@@ -224,3 +224,10 @@ Summary:
 3. Import the component in 'pages/dashboard.js' and add the component JSX inside the project mapping loop.
 4. At this point, the form allows entry of the todo, next we'll display them by getting rid of the hard-coded entries. We need to modify 'getProjects' to include the associated todo's for each project.
 5. Currently each todo has grey box next to it to indicate that it's not done. That will be handled in the next section.
+
+## Mark Todo's as Completed
+
+1. Start again with the endpoint handler at 'pages/api/complete.js'.
+2. In the 'pages/dashboard.js', listen for clicks on the 'grey boxes' - here we'll call the endpoint handler at 'api/complete' to set the item as done.
+3. If the todo is done, we'll show a check and change the font of the todo name to include a strike-through font.
+4. Currently you can't uncheck the todo - task for later.

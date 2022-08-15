@@ -74,7 +74,7 @@ export default function Dashboard({ projects }) {
             Add
           </button>
         </form>
-        
+
         <div className="grid sm:grid-cols-2 text-left ml-16">
           {projects.map((project, project_index) => (
             <div key={project_index}>
@@ -83,7 +83,28 @@ export default function Dashboard({ projects }) {
               <ol className="mt-4 text-left ">
                 {project.todos.map((todo, todo_index) => (
                   <li key={todo_index}>
-                    <span>⬜️</span> {todo.name}
+                    <span
+                      className="cursor-pointer"
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        await fetch("/api/complete", {
+                          body: JSON.stringify({
+                            id: todo.id,
+                          }),
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          method: "POST",
+                        });
+
+                        router.reload();
+                      }}
+                    >
+                      {todo.done ? "✅" : "⬜️"}
+                    </span>{" "}
+                    <span className={`${todo.done ? "line-through" : ""}`}>
+                      {todo.name}
+                    </span>
                   </li>
                 ))}
               </ol>
